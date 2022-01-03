@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_instgram_clone_graphql/providers/state.dart';
-import 'package:flutter_instgram_clone_graphql/ui/pages/create_project.dart';
-import 'package:flutter_instgram_clone_graphql/ui/pages/food_page.dart';
-import 'package:flutter_instgram_clone_graphql/ui/pages/home_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/init_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/loading_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/message_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/nav_page.dart';
-import 'package:flutter_instgram_clone_graphql/ui/pages/project_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/see_profile.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/subscription_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +29,7 @@ class MyApp extends ConsumerWidget {
     return GraphQLProvider(
       client: client,
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Instagram Clone',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.pink,
@@ -48,7 +43,6 @@ class MyApp extends ConsumerWidget {
           '/see-profile': (_) => const SeeProfile(),
           '/message': (_) => const MessagePage(),
           '/sub-page': (_) => SubscriptionPage(),
-          '/home': (_) => const HomePage(),
         },
       ),
     );
