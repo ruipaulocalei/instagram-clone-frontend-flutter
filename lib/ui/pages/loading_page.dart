@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_instgram_clone_graphql/view_model/login_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoadingPage extends ConsumerWidget {
   const LoadingPage({Key? key}) : super(key: key);
@@ -19,9 +20,10 @@ class LoadingPage extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: const [
-                    LinearProgressIndicator(),
-                    Text('FROM'),
-                    Text('PALM RISE')
+                    FaIcon(FontAwesomeIcons.instagram)
+                    // LinearProgressIndicator(),
+                    // Text('FROM'),
+                    // Text('PALM RISE')
                   ],
                 ),
               ),

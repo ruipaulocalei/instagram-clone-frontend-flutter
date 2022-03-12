@@ -39,7 +39,7 @@ class MyApp extends ConsumerWidget {
           '/loading': (_) => const LoadingPage(),
           '/login': (_) => LoginPage(),
           '/nav-page': (_) => const NavPage(),
-          '/init': (_) => const InitPage(),
+          '/init': (_) =>  InitPage({}),
           '/see-profile': (_) => const SeeProfile(),
           '/message': (_) => const MessagePage(),
           '/sub-page': (_) => SubscriptionPage(),

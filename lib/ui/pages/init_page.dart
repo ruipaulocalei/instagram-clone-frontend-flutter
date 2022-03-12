@@ -9,7 +9,57 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class InitPage extends ConsumerWidget {
-  const InitPage({Key? key}) : super(key: key);
+  const InitPage(this.repository, {Key? key}) : super(key: key);
+
+  final Map<String, Object> repository;
+
+  /// Extract the repository data for updating the fragment
+  Map<String, Object>? extractRepositoryData(Map<String, Object?> data) {
+    final action = data['feed'] as Map<String, Object>?;
+    if (action == null) {
+      return null;
+    }
+    return action;
+  }
+
+  /// Get whether the repository is currently starred, according to the current Query
+  bool? get liked => repository['isLiked'] as bool?;
+
+  /// Build an optimisticResult based on whether [viewerIsStarrring]
+  Map<String, dynamic> expectedResult(bool isLiked) =>
+      <String, dynamic>{
+        'feed': {
+            '__typename': 'PhotoModel',
+            'id': repository['id'],
+            'isLiked': isLiked,
+        }
+      };
+
+  OnMutationUpdate get update => (cache, result) {
+    if (result!.hasException) {
+      print(result.exception);
+    } else {
+      final updated = {
+        ...repository,
+        ...extractRepositoryData(result.data!)!,
+      };
+      cache.writeFragment(
+        Fragment(
+          document: gql(
+            '''
+                  fragment fields on PhotoModel {
+                    isLiked
+                  }
+                  ''',
+          ),
+        ).asRequest(idFields: {
+          '__typename': updated['__typename'],
+          'id': updated['id'],
+        }),
+        data: updated,
+      );
+    }
+  };
 
   @override
   Widget build(BuildContext context, ref) {
@@ -56,7 +106,12 @@ class InitPage extends ConsumerWidget {
     """;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Instagram Clone'),
+        title: const Text(
+          'InstaClone',
+          style: TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 5,
       ),
       body: Center(
         child: Query(
@@ -71,7 +126,13 @@ class InitPage extends ConsumerWidget {
               // final me = result.data!['me'];
               // final userData = UserModel.fromJson(me);
               final feedData = result.data!['feed'] as List<dynamic>;
+              // extractRepositoryData(result.data!['feed']);
               final feeds = feedData.map((f) => FeedModel.fromJson(f)).toList();
+              feedData.map((e) {
+                if(e != null) {
+                  return extractRepositoryData(e);
+                }
+              });
               return feeds.isNotEmpty
                   ? ListView.builder(
                       itemCount: feeds.length,
@@ -123,10 +184,12 @@ class InitPage extends ConsumerWidget {
                               ),
                               Mutation(
                                   options: MutationOptions(
-                                      document: gql(likePhoto),
-                                      onCompleted: (data) {
-                                        refetch!();
-                                      }),
+                                    document: gql(likePhoto),
+                                    update: update,
+                                    // onCompleted: (data) {
+                                    //   refetch!();
+                                    // }
+                                  ),
                                   builder: (runMutation, QueryResult? result) {
                                     return IconButton(
                                         onPressed: () {
@@ -154,8 +217,9 @@ class InitPage extends ConsumerWidget {
                                 ),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 14,),
+                                padding: const EdgeInsets.only(
+                                  left: 14,
+                                ),
                                 child: Row(
                                   children: [
                                     _goToUserProfile(context, feed.user),
@@ -208,7 +272,9 @@ class InitPage extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 6,),
+            const SizedBox(
+              width: 6,
+            ),
             Text(element.payload)
           ],
         ),

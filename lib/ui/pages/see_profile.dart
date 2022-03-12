@@ -61,7 +61,13 @@ class SeeProfile extends ConsumerWidget {
     var isSavingProvider = ref.read(isSaving.state).state;
     return Scaffold(
         appBar: AppBar(
-          title: Text(profileState),
+          title: Text(
+            profileState,
+            style: const TextStyle(
+                fontWeight: FontWeight.w900, color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 5,
         ),
         body: Query(
           options: QueryOptions(
@@ -80,7 +86,8 @@ class SeeProfile extends ConsumerWidget {
             final profileGraphql = profileQuery['profile'];
             final photos = profileGraphql['photos'] as List<dynamic>;
             final profile = ProfileModel.fromJson(profileQuery['profile']);
-            final photosData = photos.map((e) => PhotoModel.fromJson(e)).toList();
+            final photosData =
+                photos.map((e) => PhotoModel.fromJson(e)).toList();
             // debugPrint(profileGraphql.toString());
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,14 +101,13 @@ class SeeProfile extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                         const CircleAvatarWidget(
-                           height: 90,
-                           width: 90,
-                         ),
+                          const CircleAvatarWidget(
+                            height: 90,
+                            width: 90,
+                          ),
                           const Spacer(),
                           FollowWidget(
-                              number: profile.totalPublish,
-                              text: 'Publishes'),
+                              number: profile.totalPublish, text: 'Publishes'),
                           const SizedBox(width: 16),
                           FollowWidget(
                               number: profile.totalFollowers,
@@ -135,23 +141,28 @@ class SeeProfile extends ConsumerWidget {
                                     options: MutationOptions(
                                         document: gql(unfollowUser),
                                         fetchPolicy: FetchPolicy.noCache,
-                                        onCompleted: (data){
+                                        onCompleted: (data) {
                                           // isSavingProvider = true;
                                           refetch!();
                                           isSavingProvider = false;
                                         }),
-                                    builder: (runMutation, QueryResult? result) {
-                                      return  ButtonWidget(text: isSavingProvider?
-                                      'Unfollowing' :'Unfollow', onPressed: isSavingProvider ? null : () {
-                                        isSavingProvider = true;
-                                        runMutation(
-                                            {
-                                              "input": {
-                                                "username": profileState
-                                              }
-                                            }
-                                        );
-                                      },);
+                                    builder:
+                                        (runMutation, QueryResult? result) {
+                                      return ButtonWidget(
+                                        text: isSavingProvider
+                                            ? 'Unfollowing'
+                                            : 'Unfollow',
+                                        onPressed: isSavingProvider
+                                            ? null
+                                            : () {
+                                                isSavingProvider = true;
+                                                runMutation({
+                                                  "input": {
+                                                    "username": profileState
+                                                  }
+                                                });
+                                              },
+                                      );
                                     },
                                   ),
                                 ),
@@ -162,9 +173,12 @@ class SeeProfile extends ConsumerWidget {
                                   child: ButtonWidget(
                                     text: 'Message',
                                     onPressed: () {
-                                      ref.read(selectedProfileToSendMessage.state)
+                                      ref
+                                          .read(selectedProfileToSendMessage
+                                              .state)
                                           .state = profile.id;
-                                      Navigator.of(context).pushNamed('/message');
+                                      Navigator.of(context)
+                                          .pushNamed('/message');
                                       // Navigator.of(context).pushNamed('/sub-page');
                                     },
                                   ),
@@ -176,17 +190,21 @@ class SeeProfile extends ConsumerWidget {
                                   text: 'Edit Profile',
                                   onPressed: () {
                                     showModalBottomSheet(
-                                        context: context, builder: (_) {
+                                        context: context,
+                                        builder: (_) {
                                           return Container(
                                             color: const Color(0xff757575),
                                             child: Container(
                                               decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(15),
-                                                  topRight: Radius.circular(15)
-                                                )
-                                              ),
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  15),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  15))),
                                               child: Form(
                                                 child: Column(
                                                   children: [
@@ -199,30 +217,34 @@ class SeeProfile extends ConsumerWidget {
                                               ),
                                             ),
                                           );
-                                    });
+                                        });
                                   })
                               : Mutation(
-                        options: MutationOptions(
-                            document: gql(followUser),
-                            fetchPolicy: FetchPolicy.noCache,
-                            onCompleted: (data){
-                              refetch!();
-                              isSavingProvider = false;
-                            }),
-                        builder: (runMutation, QueryResult? result) {
-                          return  ButtonWidget(text: isSavingProvider?
-                          'Following' :'Follow', onPressed: isSavingProvider ? null : () {
-                            isSavingProvider = true;
-                            runMutation(
-                                {
-                                  "input": {
-                                    "username": profileState
-                                  }
-                                }
-                            );
-                          },);
-                        },
-                      ),
+                                  options: MutationOptions(
+                                      document: gql(followUser),
+                                      fetchPolicy: FetchPolicy.noCache,
+                                      onCompleted: (data) {
+                                        refetch!();
+                                        isSavingProvider = false;
+                                      }),
+                                  builder: (runMutation, QueryResult? result) {
+                                    return ButtonWidget(
+                                      text: isSavingProvider
+                                          ? 'Following'
+                                          : 'Follow',
+                                      onPressed: isSavingProvider
+                                          ? null
+                                          : () {
+                                              isSavingProvider = true;
+                                              runMutation({
+                                                "input": {
+                                                  "username": profileState
+                                                }
+                                              });
+                                            },
+                                    );
+                                  },
+                                ),
                     ],
                   ),
                 ),

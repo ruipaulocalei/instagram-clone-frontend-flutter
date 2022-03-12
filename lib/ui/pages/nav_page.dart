@@ -12,7 +12,7 @@ class NavPage extends StatefulWidget {
 
 class _NavPageState extends State<NavPage> {
   final _pages = <Widget>[
-    InitPage(),
+    InitPage({}),
     SearchPage(),
     Scaffold(),
     Scaffold(),
