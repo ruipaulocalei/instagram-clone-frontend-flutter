@@ -26,40 +26,39 @@ class InitPage extends ConsumerWidget {
   bool? get liked => repository['isLiked'] as bool?;
 
   /// Build an optimisticResult based on whether [viewerIsStarrring]
-  Map<String, dynamic> expectedResult(bool isLiked) =>
-      <String, dynamic>{
+  Map<String, dynamic> expectedResult(bool isLiked) => <String, dynamic>{
         'feed': {
-            '__typename': 'PhotoModel',
-            'id': repository['id'],
-            'isLiked': isLiked,
+          '__typename': 'PhotoModel',
+          'id': repository['id'],
+          'isLiked': isLiked,
         }
       };
 
   OnMutationUpdate get update => (cache, result) {
-    if (result!.hasException) {
-      print(result.exception);
-    } else {
-      final updated = {
-        ...repository,
-        ...extractRepositoryData(result.data!)!,
-      };
-      cache.writeFragment(
-        Fragment(
-          document: gql(
-            '''
+        if (result!.hasException) {
+          print(result.exception);
+        } else {
+          final updated = {
+            ...repository,
+            ...extractRepositoryData(result.data!)!,
+          };
+          cache.writeFragment(
+            Fragment(
+              document: gql(
+                '''
                   fragment fields on PhotoModel {
                     isLiked
                   }
                   ''',
-          ),
-        ).asRequest(idFields: {
-          '__typename': updated['__typename'],
-          'id': updated['id'],
-        }),
-        data: updated,
-      );
-    }
-  };
+              ),
+            ).asRequest(idFields: {
+              '__typename': updated['__typename'],
+              'id': updated['id'],
+            }),
+            data: updated,
+          );
+        }
+      };
 
   @override
   Widget build(BuildContext context, ref) {
@@ -129,7 +128,7 @@ class InitPage extends ConsumerWidget {
               // extractRepositoryData(result.data!['feed']);
               final feeds = feedData.map((f) => FeedModel.fromJson(f)).toList();
               feedData.map((e) {
-                if(e != null) {
+                if (e != null) {
                   return extractRepositoryData(e);
                 }
               });
@@ -185,7 +184,11 @@ class InitPage extends ConsumerWidget {
                               Mutation(
                                   options: MutationOptions(
                                     document: gql(likePhoto),
-                                    update: update,
+                                    // ignore: void_checks
+                                    update: (GraphQLDataProxy? cache,
+                                        QueryResult? result) {
+                                      return cache;
+                                    },
                                     // onCompleted: (data) {
                                     //   refetch!();
                                     // }
