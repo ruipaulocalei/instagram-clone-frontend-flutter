@@ -6,6 +6,7 @@ import 'package:flutter_instgram_clone_graphql/models/user_model.dart';
 import 'package:flutter_instgram_clone_graphql/providers/state.dart';
 import 'package:flutter_instgram_clone_graphql/ui/widgets/profile/circle_avatar_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class InitPage extends ConsumerWidget {
@@ -111,6 +112,9 @@ class InitPage extends ConsumerWidget {
         ),
         backgroundColor: Colors.white,
         elevation: 5,
+        actions: const [
+           FaIcon(FontAwesomeIcons.user),
+        ],
       ),
       body: Center(
         child: Query(
@@ -183,16 +187,15 @@ class InitPage extends ConsumerWidget {
                               ),
                               Mutation(
                                   options: MutationOptions(
-                                    document: gql(likePhoto),
-                                    // ignore: void_checks
-                                    update: (GraphQLDataProxy? cache,
-                                        QueryResult? result) {
-                                      return cache;
-                                    },
-                                    // onCompleted: (data) {
-                                    //   refetch!();
-                                    // }
-                                  ),
+                                      document: gql(likePhoto),
+                                      // ignore: void_checks
+                                      update: (GraphQLDataProxy? cache,
+                                          QueryResult? result) {
+                                        return cache;
+                                      },
+                                      onCompleted: (data) {
+                                        refetch!();
+                                      }),
                                   builder: (runMutation, QueryResult? result) {
                                     return IconButton(
                                         onPressed: () {
@@ -253,7 +256,7 @@ class InitPage extends ConsumerWidget {
                         );
                       })
                   : const Center(
-                      child: Text('No data'),
+                      child: Text('Follow users to see feeds'),
                     );
             }),
       ),
