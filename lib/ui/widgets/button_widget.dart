@@ -13,20 +13,18 @@ class ButtonWidget extends StatelessWidget {
     return SizedBox(
       height: 50,
       width: double.infinity,
-      child: Expanded(
-        child: ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    Colors.pinkAccent)),
-            onPressed: onPressed,
-            child: Text(
-              text.toUpperCase(),
-              style: const TextStyle(
-                fontSize: 20,
-                letterSpacing: 1.2,
-              ),
-            )),
-      ),
+      child: ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                  Colors.pinkAccent)),
+          onPressed: onPressed,
+          child: Text(
+            text.toUpperCase(),
+            style: const TextStyle(
+              fontSize: 20,
+              letterSpacing: 1.2,
+            ),
+          )),
     );
   }
 }
