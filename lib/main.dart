@@ -3,6 +3,7 @@ import 'package:flutter_instgram_clone_graphql/ui/pages/init_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/loading_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/message_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/nav_page.dart';
+import 'package:flutter_instgram_clone_graphql/ui/pages/register_page.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/see_profile.dart';
 import 'package:flutter_instgram_clone_graphql/ui/pages/subscription_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +39,7 @@ class MyApp extends ConsumerWidget {
         routes: {
           '/loading': (_) => const LoadingPage(),
           '/login': (_) => LoginPage(),
+          '/register': (_) => RegisterPage(),
           '/nav-page': (_) => const NavPage(),
           '/init': (_) =>  InitPage({}),
           '/see-profile': (_) => const SeeProfile(),
