@@ -23,10 +23,11 @@ class LoginPage extends ConsumerWidget {
   }
 }
 """;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
-    var isLoadingWatch = ref.watch(isSaving.state).state;
+    var isLoadingState = ref.watch(isSaving.state).state;
     return Scaffold(
         key: _scaffoldKey,
         body: Center(
@@ -39,6 +40,7 @@ class LoginPage extends ConsumerWidget {
                       document: gql(login),
                       fetchPolicy: FetchPolicy.noCache,
                       onCompleted: (data) {
+                        isLoadingState = false;
                         final loginData = data['login'];
                         // final dataResp = ResponseMessage.fromJson(loginData);
                         if (loginData['ok']) {
@@ -95,9 +97,10 @@ class LoginPage extends ConsumerWidget {
                               height: 30,
                             ),
                             ButtonWidget(
-                              text: 'Login',
-                              onPressed: () {
+                              text: isLoadingState? 'Loading.': 'Login',
+                              onPressed: isLoadingState ? null : () {
                                 if (_formKey.currentState!.validate()) {
+                                  isLoadingState = true;
                                   runMutation({
                                     "input": {
                                       "username":
@@ -107,7 +110,16 @@ class LoginPage extends ConsumerWidget {
                                   });
                                 }
                               },
-                            )
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed("/register");
+                                },
+                                child:
+                                    const Text("Are you new? Create Account."))
                           ],
                         ),
                       ),
