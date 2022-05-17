@@ -8,6 +8,7 @@ class InputWidget extends StatelessWidget {
     this.obscureText = false,
     required this.validatorFunction,
     required this.controller,
+    this.textInputType = TextInputType.text,
     // this.initialValue = '',
   }) : super(key: key);
 
@@ -16,10 +17,12 @@ class InputWidget extends StatelessWidget {
   // final void Function(String value) inputFunction;
   final String? Function(String value) validatorFunction;
   final TextEditingController controller;
+  final TextInputType textInputType;
   // final String initialValue;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: textInputType,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: labelText,
