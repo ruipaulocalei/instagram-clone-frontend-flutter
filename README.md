@@ -2,6 +2,7 @@
 ## FLUTTER + GRAPHQL + RIVERPOD
 
 ### USER
+- [x] REGISTER
 - [x] LOGIN
 - [x] SEE PROFILE
 - [x] EDIT PROFILE
