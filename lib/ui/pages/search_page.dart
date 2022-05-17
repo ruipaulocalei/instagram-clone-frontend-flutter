@@ -21,10 +21,15 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search'),
+        title: const Text(
+          'InstaClone',
+          style: TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 5,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.search, color: Colors.black,),
             onPressed: () {
               showSearch(context: context, delegate: Search());
             },
