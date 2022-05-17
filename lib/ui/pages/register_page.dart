@@ -1,0 +1,154 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_instgram_clone_graphql/common/show_dialog.dart';
+import 'package:flutter_instgram_clone_graphql/models/response_message.dart';
+import 'package:flutter_instgram_clone_graphql/providers/state.dart';
+import 'package:flutter_instgram_clone_graphql/ui/widgets/button_widget.dart';
+import 'package:flutter_instgram_clone_graphql/ui/widgets/input_widget.dart';
+import 'package:flutter_instgram_clone_graphql/view_model/login_view_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+
+class RegisterPage extends ConsumerWidget {
+  final _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final loginViewModel = LoginViewModel();
+
+  final String register = """
+  mutation createUser(\$input: CreateUserInput!){
+    createUser(input:\$input){
+      ok
+      error
+    }
+  }
+  """;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+    var isSavingState = ref.watch(isSaving.state).state;
+    return Scaffold(
+        key: _scaffoldKey,
+        body: Center(
+          child: SingleChildScrollView(
+            child: Card(
+                elevation: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                child: Mutation(
+                  options: MutationOptions(
+                      document: gql(register),
+                      fetchPolicy: FetchPolicy.noCache,
+                      onCompleted: (data) {
+                        isSavingState = false;
+                        final registerResponse = data['createUser'];
+                        // final dataResp = ResponseMessage.fromJson(loginData);
+                        if (registerResponse['ok']) {
+                          Navigator.of(context).pushNamed("/login");
+                        } else {
+                          showDialogWidget(context, 'Error',
+                              registerResponse['error'].toString());
+                        }
+                      }),
+                  builder: (runMutation, QueryResult? result) {
+                    return Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 40),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'INSTAGRAM',
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      letterSpacing: 1.4,
+                                      fontWeight: FontWeight.w300),
+                                )),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            InputWidget(
+                              labelText: 'name',
+                              controller: nameController,
+                              validatorFunction: (String value) =>
+                                  value.isEmpty ? 'Name is required' : null,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            InputWidget(
+                              labelText: 'Username',
+                              controller: usernameController,
+                              // inputFunction: (String value) => value = '',
+                              validatorFunction: (String value) =>
+                                  value.isEmpty ? 'username is required' : null,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            InputWidget(
+                              labelText: 'E-mail',
+                              controller: emailController,
+                              textInputType: TextInputType.emailAddress,
+                              validatorFunction: (String value) =>
+                                  value.isEmpty ? 'E-mail is required' : null,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            InputWidget(
+                              labelText: 'Password',
+                              // initialValue: '123456',
+                              controller: passwordController,
+                              obscureText: true,
+                              // inputFunction: (String value) => value = '',
+                              validatorFunction: (String value) =>
+                                  value.isEmpty ? 'password is required' : null,
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            ButtonWidget(
+                              text: isSavingState
+                                  ? "Creating account..."
+                                  : 'Create Account',
+                              onPressed: isSavingState
+                                  ? null
+                                  : () {
+                                      if (_formKey.currentState!.validate()) {
+                                        isSavingState = true;
+                                        runMutation({
+                                          "input": {
+                                            "name": nameController.text,
+                                            "username": usernameController.text,
+                                            "password": passwordController.text,
+                                            "email": emailController.text
+                                          }
+                                        });
+                                      }
+                                    },
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed("/login");
+                                },
+                                child: const Text("Have an account? Sign In"))
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                )),
+          ),
+        ));
+  }
+}
